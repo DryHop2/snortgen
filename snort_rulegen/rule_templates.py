@@ -1,6 +1,8 @@
 def build_rule(proto, src_ip, src_port, dst_ip, dst_port, 
                msg, content, sid, rev=1, 
-               nocase=False, offset=None, depth=None):
+               nocase=False, offset=None, depth=None,
+               flags=None):
+    
     options = [
         f'msg:"{msg}"',
     ]
@@ -13,6 +15,9 @@ def build_rule(proto, src_ip, src_port, dst_ip, dst_port,
             options.append(f"offset:{offset}")
         if depth:
             options.append(f"depth:{depth}")
+
+    if flags:
+        options.append(f"flags:{flags}")
 
     options.append(f"sid:{sid}")
     options.append(f"rev:{rev}")
