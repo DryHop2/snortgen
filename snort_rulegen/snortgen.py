@@ -55,6 +55,10 @@ def run():
 
     content = input("Content to match (e.g., cmd.exe): ").strip()
     nocase = input("Apply nocase (case-insensitive match)? [y/N]: ").strip().lower() == "y"
+    offset = input("Set offset (starting byte for search, leave blank to skip): ").strip()
+    if offset and not offset.isdigit():
+        print("Invalid offset. Ignoring.")
+        offset = None
     depth = input("Set depth (max bytes to search, leave blank to skip): ").strip()
     if depth and not depth.isdigit():
         print("Invalid depth. Ignoring.")
@@ -66,7 +70,8 @@ def run():
     rule = build_rule(proto, src_ip, src_port, dst_ip, dst_port, 
                       msg, content, sid, 
                       nocase=nocase,
-                      depth=depth)
+                      depth=depth,
+                      offset=offset)
 
     print("\nGenerated Rule:")
     print(rule)
