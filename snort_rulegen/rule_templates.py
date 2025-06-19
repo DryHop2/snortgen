@@ -1,4 +1,4 @@
-def build_rule(proto, src_ip, src_port, dst_ip, dst_port, msg, content, sid, rev=1, nocase=False):
+def build_rule(proto, src_ip, src_port, dst_ip, dst_port, msg, content, sid, rev=1, nocase=False, depth=None):
     options = [
         f'msg:"{msg}"',
     ]
@@ -7,6 +7,8 @@ def build_rule(proto, src_ip, src_port, dst_ip, dst_port, msg, content, sid, rev
         options.append(f'content:"{content}"')
         if nocase:
             options.append("nocase")
+        if depth:
+            options.append(f"depth:{depth}")
 
     options.append(f"sid:{sid}")
     options.append(f"rev:{rev}")
