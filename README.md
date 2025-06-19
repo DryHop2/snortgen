@@ -41,7 +41,7 @@ python main.py
 ```
 
 ## Example Rule Output
-alert tcp any any -> $HOME_NET 80 (
+snort alert tcp any any -> $HOME_NET 80 (
     msg:"Suspicious download";
     content:"wget";
     nocase;
@@ -61,7 +61,7 @@ Planned future enhancements:
 * Rule file selection(web.rules, malware.rules, etc.)
 * Command-line argument support
 * JSON/CSV export
-* Bulk rule generation from strutured input
+* Bulk rule generation from structured input
 * SID counter reset (with warnings)
 * Configurable output settings
 
