@@ -41,6 +41,7 @@ python main.py
 ```
 
 ## Example Rule Output
+```
 snort alert tcp any any -> $HOME_NET 80 (
     msg:"Suspicious download";
     content:"wget";
@@ -55,6 +56,7 @@ snort alert tcp any any -> $HOME_NET 80 (
     sid:1000001;
     rev:1;
 )
+```
 
 ## Roadmap
 Planned future enhancements:
