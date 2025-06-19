@@ -1,0 +1,1 @@
+alert udp 8.2.1.2 135 -> $HOME_NET 80 (msg:""; content:""; sid:1000001; rev:1;)
