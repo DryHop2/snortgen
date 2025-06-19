@@ -2,7 +2,7 @@ def build_rule(proto, src_ip, src_port, dst_ip, dst_port,
                msg, content, sid, rev=1, 
                nocase=False, offset=None, depth=None,
                flags=None, pcre=None, classtype=None,
-               priority=None, metadata=None):
+               priority=None, metadata=None, reference=None):
     
     options = [
         f'msg:"{msg}"',
@@ -27,6 +27,8 @@ def build_rule(proto, src_ip, src_port, dst_ip, dst_port,
         options.append(f"priority:{priority}")
     if metadata:
         options.append(f"metadata:{metadata}")
+    if reference:
+        options.append(f"reference:{reference}")
 
     options.append(f"sid:{sid}")
     options.append(f"rev:{rev}")
