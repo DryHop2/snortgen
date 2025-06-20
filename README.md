@@ -68,7 +68,7 @@ Planned future enhancements:
 * Configurable output settings
 
 ## Requirements
-* Python 3.8+
+* Python 3.10+
 * Docker (optional, for containerized use)
 
 ## License
