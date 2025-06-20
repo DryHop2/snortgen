@@ -1,6 +1,6 @@
 import argparse
 
-from snort_rulegen.snortgen import run
+from snort_rulegen.snortgen import run, run_interactive
 
 
 def main():
@@ -20,14 +20,23 @@ def main():
     )
 
     parser.add_argument(
+        "-i", "--interactive",
+        action="store_true",
+        help="Run in interactive prompt mode"
+    )
+    
+    parser.add_argument(
         "-v", "--version",
         action="version",
         version="Snortgen 1.0.0"
     )
 
-    _ = parser.parse_args()
+    args = parser.parse_args()
 
-    run()
+    if args.interactive or len(vars(args)) == 1:
+        run_interactive()
+    else:
+        run(args)
 
 if __name__ == "__main__":
     main()
