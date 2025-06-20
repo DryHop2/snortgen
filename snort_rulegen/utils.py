@@ -3,6 +3,15 @@ import argparse
 import re
 
 
+def validate_protocol(value: str) -> str:
+    """Validate protocol for Snort rules (tcp, udp, icmp, ip)"""
+    allowed = {"tcp", "udp", "icmp", "ip"}
+    val = value.lower()
+    if val in allowed:
+        return val
+    raise argparse.ArgumentTypeError(f"Invalid protocol: '{value}'. Must be one of {', '.join(allowed)}.")
+
+
 def validate_ip(value: str) -> str:
     """Validate IP address or allow 'any' and Snort-style vars like $HOME_NET."""
     if value.lower() == "any" or value.startswith("$"):

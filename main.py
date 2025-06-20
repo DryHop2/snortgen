@@ -1,7 +1,8 @@
 import argparse
 
-from snort_rulegen.snortgen import run, run_interactive
+from snort_rulegen.snortgen import run_interactive
 from snort_rulegen.utils import (
+    validate_protocol,
     validate_ip,
     validate_port,
     validate_priority,
@@ -42,10 +43,9 @@ def main():
 
     parser.add_argument(
         "--proto",
-        type=str,
+        type=validate_protocol,
         default="tcp",
-        choices=["tcp", "udp", "icmp"],
-        help="Protocol to use for the rule (default: tcp)"
+        help="Protocol to use for the rule (default: tcp; options: tcp, udp, icmp, ip)"
     )
 
     parser.add_argument(

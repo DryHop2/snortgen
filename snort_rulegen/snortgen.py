@@ -1,49 +1,21 @@
 import os
-import ipaddress
 
 from snort_rulegen.rule_templates import build_rule
 from snort_rulegen.sid_manager import get_next_sid
+from snort_rulegen.utils import (
+    validate_protocol,
+    validate_ip,
+    validate_port,
+    validate_priority,
+    validate_offset_depth,
+    validate_flags,
+    validate_pcre,
+    validate_metadata,
+    validate_msg
+)
 
 
-def prompt_protocol():
-    while True:
-        proto = input("Protocol [tcp/udp/icmp]: ").strip().lower()
-        if proto in ("tcp", "udp", "icmp", ""):
-            return proto or "tcp"
-        print("Invalid protocol. Choose from tcp, udp, icmp.")
-
-
-def prompt_ip(prompt_text, allow_vars=False, default=None):
-    while True:
-        val = input(prompt_text).strip()
-        if not val and default:
-            return default
-        if val.lower() == "any":
-            return "any"
-        if allow_vars and val.startswith("$"):
-            return val
-        try:
-            ipaddress.ip_address(val)
-            return val
-        except ValueError:
-            print("Invalid IP address.")
-
-
-def prompt_port(prompt_text):
-    while True:
-        val = input(prompt_text).strip()
-        if val.lower() == "any" or val == "":
-            return "any"
-        try:
-            port = int(val)
-            if 0 <= port <= 65535:
-                return str(port)
-            print("Port must be between 0 and 65535.")
-        except ValueError:
-            print("Invalid port. Must be an integer or 'any'.")
-
-
-def run():
+def run_interactive():
     print("Snort Rule Generator")
     print("--------------------")
 
