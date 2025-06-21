@@ -60,12 +60,17 @@ snort alert tcp any any -> $HOME_NET 80 (
 
 ## Roadmap
 Planned future enhancements:
-* Rule file selection(web.rules, malware.rules, etc.)
-* Command-line argument support
 * JSON/CSV export
 * Bulk rule generation from structured input
+* Config file implementation
 * SID counter reset (with warnings)
 * Configurable output settings
+* Dry run/preview mode for viewing rules before saving to file
+* Rule linting/validation
+* Inline comment support (e.g., Snort alert ...... # Seen in logs on 2025-03-18)
+* Rule deduplication
+* Team support
+* Documentation
 
 ## Requirements
 * Python 3.10+
