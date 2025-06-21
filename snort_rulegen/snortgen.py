@@ -19,66 +19,91 @@ def run_interactive():
     print("Snort Rule Generator")
     print("--------------------")
 
-    proto = prompt_protocol()
-    src_ip = prompt_ip("Source IP [any]: ", allow_vars=False, default="any")
-    src_port = prompt_port("Source Port [any]: ")
-    dst_ip = prompt_ip("Destination IP [$HOME_NET]: ", allow_vars=True, default="$HOME_NET")
-    dst_port = prompt_port("Destination port [80]: ") or "80"
+    # Protocol
+    proto = input("Protocol [tcp/udp/icmp/ip] (default: tcp) ").strip().lower()
+    try:
+        proto = validate_protocol(proto)
+    except ValueError as e:
+        print(f"Protocol error: {e}")
+        return
+    
+    # IP
+    src_ip = input("Source IP [any]: ").strip() or "any"
+    src_port = input("Source Port [any]: ").strip() or "$HOME_NET"
+    dst_ip = input("Destination IP [$HOME_NET]: ").strip() or "any"
+    dst_port = input("Destination port [80]: ") or "80"
 
+    try:
+        src_ip = validate_ip(src_ip)
+        dst_ip = validate_ip(dst_ip)
+        src_port = validate_port(src_port)
+        dst_port = validate_port(dst_port)
+    except ValueError as e:
+        print(f"Input error: {e}")
+        return
+    
+    # Payload match
     content = input("Content to match (e.g., cmd.exe): ").strip()
     nocase = input("Apply nocase (case-insensitive match)? [y/N]: ").strip().lower() == "y"
+    
     offset = input("Set offset (starting byte for search, leave blank to skip): ").strip()
-    if offset and not offset.isdigit():
-        print("Invalid offset. Ignoring.")
-        offset = None
     depth = input("Set depth (max bytes to search, leave blank to skip): ").strip()
-    if depth and not depth.isdigit():
-        print("Invalid depth. Ignoring.")
+    try:
+        offset, depth = validate_offset_depth(offset, depth)
+    except ValueError as e:
+        print(f"Offset/depth error: {e}")
+        offset = None
         depth = None
-    if offset and depth:
-        try:
-            if int(offset) > int(depth):
-                print("Offset cannot be greater than depth. Ignoring offset.")
-                offset = None
-        except ValueError:
-            print("Invalid numeric input for offset or depth.")
-            offset = None
+    
+    # TCP flags
     flags = input("TCP flags to match (e.g., S, SA, leave blank to skip): ").strip().upper()
+    if flags:
+        try:
+            flags = validate_flags(flags)
+        except ValueError as e:
+            print(f"Flags error: {e}")
+            flags = None
+
+    # PCRE
     pcre = input("Add PCRE regex match (format: /regex/modifiers, leave blank to skip): ").strip()
-    if pcre and not (pcre.startswith("/") and pcre.endswith("/")) and not ('/' in pcre[1:]):
-        print("PCRE must start and end with '/' and include pattern. Ignoring.")
-        pcre = None
+    if pcre:
+        try:
+            pcre = validate_pcre(pcre)
+        except ValueError as e:
+            print(f"PCRE error: {e}")
+            pcre = None
+    
+    # Classtype and priority
     classtype = input("Set classtype (e.g., attempted-admin, leave blank to skip): ").strip().lower()
     priority = input("Set priority (1 = high, 3 = low, leave blank to skip): ").strip()
-    if priority and not priority.isdigit():
-        print("Invalid priority. Must be 1 - 3. Ignoring.")
-        priority = None
-    elif priority and int(priority) not in (1, 2, 3):
-        print("Priority must be 1, 2, or 3. Ignoring.")
-        priority = None
+    if priority:
+        try:
+            priority = validate_priority(priority)
+        except ValueError as e:
+            print(f"Priority error: {e}")
+            priority = None
+    
+    # Metadata
+    metadata = None
     use_metatdata = input("Would you like to add metadata to Snort rule? [y/N]: ").strip().lower() == "y"
     if use_metatdata:
-        metadata_tags = []
-        target = input("Attack target (e.g., server, client) [leave blank to skip]: ").strip()
-        if target:
-            metadata_tags.append(f"attack_target {target}")
-        deployment = input("Deployment context (e.g., perimeter, internal): ").strip()
-        if deployment:
-            metadata_tags.append(f"deployment {deployment}")
-        created = input("Date created (e.g., 2024_06_19): ").strip()
-        if created:
-            metadata_tags.append(f"created_at {created}")
-        custom = input("Custom metadata (e.g., policy internal, tactic persistence): ").strip()
-        if custom:
-            metadata_tags.append(custom)
-        metadata = ", ".join(metadata_tags) if metadata_tags else None
+        raw = input("Enter metadata (e.g., key value, key value): ").strip()
+        try:
+            metadata = validate_metadata(raw)
+        except ValueError as e:
+            print(f"Metadata error: {e}")
+
+    # Reference
     reference = input("Add reference (format: type, value - e.g., cve,2021-44228 or url, https://....) [leave blank to skip]: ").strip()
     if reference and "," not in reference:
         print("Reference must be in format type,value (e.g., url,http://...). Ignoring.")
         reference = None
 
-    msg = input("Rule message: ").strip() or "Generated by SnortGen"
+    # Message
+    msg = input("Rule message: (default: Generated by Snortgen): ").strip() or "Generated by SnortGen"
+    msg = validate_msg(msg)
 
+    # Rule construction
     sid = get_next_sid()
     rule = build_rule(proto, src_ip, src_port, dst_ip, dst_port, 
                       msg, content, sid, 
@@ -95,6 +120,7 @@ def run_interactive():
     print("\nGenerated Rule:")
     print(rule)
 
+    # Save to file
     out_path = "rules/local.rules"
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
 

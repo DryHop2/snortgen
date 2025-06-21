@@ -141,7 +141,8 @@ def main():
     if args.interactive or len(vars(args)) == 1:
         run_interactive()
     else:
-        run(args)
+        # run(args)
+        pass
 
 if __name__ == "__main__":
     main()
