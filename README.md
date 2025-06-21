@@ -69,8 +69,11 @@ Planned future enhancements:
 * Rule linting/validation
 * Inline comment support (e.g., Snort alert ...... # Seen in logs on 2025-03-18)
 * Rule deduplication
-* Team support
+* Revision tracking
 * Documentation
+Stetch goals (as time allows or requests come in)
+* Advanced Snort options (e.g., HTTP specific options, byte_*, non-payload detection, etc.)
+* Team support options
 
 ## Requirements
 * Python 3.10+
