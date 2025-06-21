@@ -38,7 +38,7 @@ def main():
     )
     
     parser.add_argument(
-        "-v", "--version",
+        "--version",
         action="version",
         version="Snortgen 1.0.0"
     )
@@ -142,6 +142,18 @@ def main():
         "--reference",
         type=argparse_type(validate_reference),
         help="Provides additional context to Snort rule in form of scheme,id (e.g., url,www.example.com)"
+    )
+
+    parser.add_argument(
+        "--outfile",
+        type=str,
+        help="Path to save generated Snort rule (default: rules/local.rules)"
+    )
+
+    parser.add_argument(
+        "-v", "--verbose",
+        action="store_true",
+        help="Enable verbose outplut (e.g., file and directory warnings, internal steps)"
     )
 
     args = parser.parse_args()

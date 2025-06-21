@@ -124,9 +124,13 @@ def run_interactive():
     print("\nGenerated Rule:")
     print(rule)
 
-    # Save to file
-    out_path = "rules/local.rules"
-    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    # Save directory/file
+    default_out = "rules/local.rules"
+    out_path = input(f"\nOutput path (default: {default_out}): ").strip() or default_out
+    if os.path.exists(out_path):
+        print(f"Warning: {out_path} already exists and will be appended to.")
+    dir_path = os.path.dirname(out_path) or "."
+    os.makedirs(dir_path, exist_ok=True)
 
     with open(out_path, "a") as f:
         f.write(rule + "\n")
@@ -165,8 +169,12 @@ def run(args):
         print("\nGenerated Rule:")
         print(rule)
 
-        out_path = "rules/local.rules"
-        os.makedirs(os.path.dirname(out_path), exist_ok=True)
+        out_path = args.outfile or "rules/local.rules"
+        if args.verbose and os.path.exists(out_path):
+            print(f"Warning: {out_path} already exists and will be appended to.")
+        dir_path = os.path.dirname(out_path) or "."
+        os.makedirs(dir_path, exist_ok=True)
+
         with open(out_path, "a") as f:
             f.write(rule + "\n")
 
