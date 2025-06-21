@@ -10,7 +10,8 @@ from snort_rulegen.utils import (
     validate_pcre,
     validate_metadata,
     validate_msg,
-    validate_reference
+    validate_reference,
+    argparse_type
 )
 
 
@@ -44,35 +45,35 @@ def main():
 
     parser.add_argument(
         "--proto",
-        type=validate_protocol,
+        type=argparse_type(validate_protocol),
         default="tcp",
         help="Protocol to use for the rule (default: tcp; options: tcp, udp, icmp, ip)"
     )
 
     parser.add_argument(
         "--src-ip",
-        type=validate_ip,
+        type=argparse_type(validate_ip),
         default="any",
         help="Source IP to use for the rule (default: any)"
     )
 
     parser.add_argument(
         "--src-port",
-        type=validate_port,
+        type=argparse_type(validate_port),
         default="any",
         help="Source port to use for the rule (default: any)"
     )
 
     parser.add_argument(
         "--dst-ip",
-        type=validate_ip,
+        type=argparse_type(validate_ip),
         default="$HOME_NET",
         help="Destination IP to use for the rule (default: $HOME_NET)"
     )
 
     parser.add_argument(
         "--dst-port",
-        type=validate_port,
+        type=argparse_type(validate_port),
         default="80",
         help="Destination port to use for the rule (default: 80)"
     )
@@ -103,13 +104,13 @@ def main():
 
     parser.add_argument(
         "--flags",
-        type=validate_flags,
+        type=argparse_type(validate_flags),
         help="TCP flags to match for rule (e.g., S, SA, *SA, SF,CE)"
     )
 
     parser.add_argument(
         "--pcre",
-        type=validate_pcre,
+        type=argparse_type(validate_pcre),
         help="Perl-compatible regex pattern (e.g., /user.*=root/i)"
     )
 
@@ -121,26 +122,26 @@ def main():
 
     parser.add_argument(
         "--priority",
-        type=validate_priority,
+        type=argparse_type(validate_priority),
         help="Set or override (if using classtype) the default priority of the alert"
     )
 
     parser.add_argument(
         "--metadata",
-        type=validate_metadata,
+        type=argparse_type(validate_metadata),
         help="Key value pairs, comma separated (e.g., 'key value, key value'), containing additional information about the rule"        
     )
 
     parser.add_argument(
         "--msg",
-        type=validate_msg,
+        type=argparse_type(validate_msg),
         help="Rule option describing the rule (must escape Snort reserved characters)"
     )
 
     parser.add_argument(
         "--reference",
-        type=validate_reference,
-        help="Provides additional context to Snort rule in form of scheme, id (e.g., url,www.exmaple.com)"
+        type=argparse_type(validate_reference),
+        help="Provides additional context to Snort rule in form of scheme,id (e.g., url,www.example.com)"
     )
 
     args = parser.parse_args()

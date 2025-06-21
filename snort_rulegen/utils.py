@@ -9,7 +9,7 @@ def validate_protocol(value: str) -> str:
     val = value.lower()
     if val in allowed:
         return val
-    raise argparse.ArgumentTypeError(f"Invalid protocol: '{value}'. Must be one of {', '.join(allowed)}.")
+    raise ValueError(f"Invalid protocol: '{value}'. Must be one of {', '.join(allowed)}.")
 
 
 def validate_ip(value: str) -> str:
@@ -20,7 +20,7 @@ def validate_ip(value: str) -> str:
         ipaddress.ip_address(value)
         return value
     except ValueError:
-        raise argparse.ArgumentTypeError(f"Invalid IP address: {value}")
+        raise ValueError(f"Invalid IP address: {value}")
     
 
 def validate_port(value: str) -> str:
@@ -31,9 +31,9 @@ def validate_port(value: str) -> str:
         port = int(value)
         if 0 <= port <= 65535:
             return str(port)
-        raise argparse.ArgumentTypeError("Port must be between 0 and 65535.")
+        raise ValueError("Port must be between 0 and 65535.")
     except ValueError:
-        raise argparse.ArgumentTypeError("Invalid port: must be an integer or 'any'.")
+        raise ValueError("Invalid port: must be an integer or 'any'.")
     
 
 def validate_priority(value: str) -> str:
@@ -42,9 +42,9 @@ def validate_priority(value: str) -> str:
         priority = int(value)
         if 1 <= priority <= 2_147_483_647:
             return str(priority)
-        raise argparse.ArgumentTypeError("Priority must be between 1 and 2,147,483,647.")
+        raise ValueError("Priority must be between 1 and 2,147,483,647.")
     except ValueError:
-        raise argparse.ArgumentTypeError("Invalid priority: must be an integer.")
+        raise ValueError("Invalid priority: must be an integer.")
     
 
 def validate_offset_depth(offset: str | None, depth: str | None) -> tuple[int | None, int | None]:
@@ -67,13 +67,13 @@ def validate_flags(flags: str) -> str:
     allowed_chars = set("FSRPAUCE0*+!,")
     if all(c in allowed_chars for c in flags):
         return flags.upper()
-    raise argparse.ArgumentTypeError(f"Invalid character in TCP flags: {flags}")
+    raise ValueError(f"Invalid character in TCP flags: {flags}")
 
 
 def validate_pcre(pcre: str) -> str:
     """Validate basic structure of a PCRE string for Snort."""
     if not (pcre.startswith("/") and "/" in pcre[1:]):
-        raise argparse.ArgumentTypeError("Invalid PCRE format. Must start with and have closing '/'.")
+        raise ValueError("Invalid PCRE format. Must start with and have closing '/'.")
     return pcre
 
 
@@ -83,16 +83,16 @@ def validate_metadata(data: str) -> str:
 
     for part in parts:
         if " " not in part:
-            raise argparse.ArgumentTypeError(
+            raise ValueError(
                 f"Invalid metadata segment '{part}'. Each entry should be a key-value pair like 'key value'."
             )
         key, val = part.split(" ", 1)
         if not key.isidentifier():
-            raise argparse.ArgumentTypeError(
+            raise ValueError(
                 f"Invalid metadata key '{key}'. Keys should be alphanumeric and start with a letter."
             )
         if not val:
-            raise argparse.ArgumentTypeError(
+            raise ValueError(
                 f"Missing value for metadata key '{key}'."
             )
         
@@ -123,13 +123,22 @@ def validate_msg(value: str) -> str:
 def validate_reference(value: str) -> str:
     """Validate that reference is in format scheme,id"""
     if "," not in value:
-        raise argparse.ArgumentTypeError("Reference must be in format: scheme,id")
+        raise ValueError("Reference must be in format: scheme,id")
     
     scheme, id_ = value.split(",", 1)
     scheme = scheme.strip().lower()
     id_ = id_.strip()
 
     if not scheme or not id_:
-        raise argparse.ArgumentTypeError("Reference must include both scheme and id.")
+        raise ValueError("Reference must include both scheme and id.")
     
     return f"{scheme},{id_}"
+
+
+def argparse_type(func):
+    def wrapper(value):
+        try:
+            return func(value)
+        except ValueError as e:
+            raise argparse.ArgumentTypeError(str(e))
+    return wrapper
