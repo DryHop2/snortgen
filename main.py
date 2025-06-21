@@ -1,6 +1,6 @@
 import argparse
 
-from snort_rulegen.snortgen import run_interactive
+from snort_rulegen.snortgen import run_interactive, run
 from snort_rulegen.utils import (
     validate_protocol,
     validate_ip,
@@ -9,7 +9,8 @@ from snort_rulegen.utils import (
     validate_flags,
     validate_pcre,
     validate_metadata,
-    validate_msg
+    validate_msg,
+    validate_reference
 )
 
 
@@ -136,13 +137,18 @@ def main():
         help="Rule option describing the rule (must escape Snort reserved characters)"
     )
 
+    parser.add_argument(
+        "--reference",
+        type=validate_reference,
+        help="Provides additional context to Snort rule in form of scheme, id (e.g., url,www.exmaple.com)"
+    )
+
     args = parser.parse_args()
 
     if args.interactive or len(vars(args)) == 1:
         run_interactive()
     else:
-        # run(args)
-        pass
+        run(args)
 
 if __name__ == "__main__":
     main()

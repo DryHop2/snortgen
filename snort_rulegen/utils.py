@@ -118,3 +118,18 @@ def validate_msg(value: str) -> str:
     escaped = re.sub(pattern, escape_char, value)
 
     return escaped
+
+
+def validate_reference(value: str) -> str:
+    """Validate that reference is in format scheme,id"""
+    if "," not in value:
+        raise argparse.ArgumentTypeError("Reference must be in format: scheme,id")
+    
+    scheme, id_ = value.split(",", 1)
+    scheme = scheme.strip().lower()
+    id_ = id_.strip()
+
+    if not scheme or not id_:
+        raise argparse.ArgumentTypeError("Reference must include both scheme and id.")
+    
+    return f"{scheme},{id_}"
