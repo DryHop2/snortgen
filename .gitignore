@@ -195,3 +195,4 @@ cython_debug/
 
 # Random .txt or other files that don't need version control
 sid_state.txt
+rules/*.rules
