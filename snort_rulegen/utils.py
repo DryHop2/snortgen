@@ -1,6 +1,7 @@
 import ipaddress
 import argparse
 import re
+import os
 
 
 def validate_protocol(value: str) -> str:
@@ -31,7 +32,8 @@ def validate_port(value: str) -> str:
         port = int(value)
         if 0 <= port <= 65535:
             return str(port)
-        raise ValueError("Port must be between 0 and 65535.")
+        else:
+            raise ValueError("Port must be between 0 and 65535.")
     except ValueError:
         raise ValueError("Invalid port: must be an integer or 'any'.")
     
@@ -142,3 +144,20 @@ def argparse_type(func):
         except ValueError as e:
             raise argparse.ArgumentTypeError(str(e))
     return wrapper
+
+
+def get_latest_revision(outfile: str, sid: int) -> int:
+    if not os.path.exists(outfile):
+        return 1
+    
+    rev_pattern = re.compile(rf'sid:{sid};\s*rev:(\d+)')
+    max_rev = 0
+
+    with open(outfile, 'r') as f:
+        for line in f:
+            match = rev_pattern.search(line)
+            if match:
+                rev = int(match.group(1))
+                max_rev = max(max_rev, rev)
+
+    return max_rev + 1 if max_rev else 1

@@ -71,9 +71,11 @@ Planned future enhancements:
 * Rule deduplication
 * Revision tracking
 * Documentation
+
 Stetch goals (as time allows or requests come in)
 * Advanced Snort options (e.g., HTTP specific options, byte_*, non-payload detection, etc.)
 * Team support options
+* Local installation/packaging
 
 ## Requirements
 * Python 3.10+

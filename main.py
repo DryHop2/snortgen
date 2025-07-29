@@ -1,6 +1,7 @@
 import argparse
 
 from snort_rulegen.snortgen import run_interactive, run
+from snort_rulegen.batch import run_batch
 from snort_rulegen.utils import (
     validate_protocol,
     validate_ip,
@@ -156,9 +157,27 @@ def main():
         help="Enable verbose outplut (e.g., file and directory warnings, internal steps)"
     )
 
+    parser.add_argument(
+        "--batch",
+        type=str,
+        help="Path to JSON file with batch rule definitions"
+    )
+
+    parser.add_argument(
+        "--sid",
+        type=int,
+        help="Manually specify a SID. If that SID exists in the output file, the revision will be incremented. (Can overwrite rules)"
+    )
+
     args = parser.parse_args()
 
-    if args.interactive or len(vars(args)) == 1:
+    if args.batch:
+        run_batch(
+            filepath=args.batch,
+            outfile=args.outfile if hasattr(args, "outfile") else None,
+            verbose=args.verbose if hasattr(args, "verbose") else False
+        )
+    elif args.interactive or len(vars(args)) == 1:
         run_interactive()
     else:
         run(args)
