@@ -59,23 +59,29 @@ snort alert tcp any any -> $HOME_NET 80 (
 ```
 
 ## Roadmap
-Planned future enhancements:
-* JSON/CSV export
-* Bulk rule generation from structured input
-* Config file implementation
-* SID counter reset (with warnings)
-* Configurable output settings
-* Dry run/preview mode for viewing rules before saving to file
-* Rule linting/validation
-* Inline comment support (e.g., Snort alert ...... # Seen in logs on 2025-03-18)
-* Rule deduplication
-* Revision tracking
-* Documentation
 
-Stetch goals (as time allows or requests come in)
-* Advanced Snort options (e.g., HTTP specific options, byte_*, non-payload detection, etc.)
-* Team support options
-* Local installation/packaging
+### Completed
+- Interactive and batch rule generation
+- Auto SID generation and revision tracking
+- PCRE, metadata, reference, and TCP flag support
+- Rule output with configurable SID and message
+- JSON-based batch mode
+- CLI argument validation and help docs
+
+### Planned future enhancements:
+- Config file support (~/.snortgenrc or custom JSON)
+- Dry-run mode for rule preview
+- Inline comment support (# appended to rule)
+- CSV import for batch rules
+- Rule deduplication (ignore SID/msg on comparison)
+
+### Stetch goals (as time allows or requests come in)
+- Advanced Snort options (e.g., HTTP specific options, byte_*, non-payload detection, etc.)
+- Team support options
+- Local installation/packaging
+- Rule linter/validator
+- Snort rule diffing and comparison
+- Interactive TUI interface
 
 ## Requirements
 * Python 3.10+
