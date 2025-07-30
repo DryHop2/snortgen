@@ -169,6 +169,12 @@ def main():
         help="Manually specify a SID. If that SID exists in the output file, the revision will be incremented. (Can overwrite rules)"
     )
 
+    parser.add_argument(
+        "--comment",
+        type=str,
+        help="Optional comment to append after rule (e.g., '# Investigated on 2025-07-29)"
+    )
+
     args = parser.parse_args()
 
     if args.batch:

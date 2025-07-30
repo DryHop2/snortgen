@@ -112,11 +112,13 @@ def run_interactive():
     default_out = "rules/local.rules"
     out_path = input(f"\nOutput path (default: {default_out}): ").strip() or default_out
 
-    # Rule construction
+    # SID & rev
     sid = int(input("SID (leave blank to auto-generate): ").strip() or 0)
     if not sid:
         sid = get_next_sid()
     rev = get_latest_revision(out_path, sid)
+
+    # Rule construction
     rule = build_rule(proto=proto, 
                       src_ip=src_ip, 
                       src_port=src_port, 
@@ -135,6 +137,11 @@ def run_interactive():
                       priority=priority,
                       metadata=metadata,
                       reference=reference)
+    
+    # Comment
+    comment = input("Optional inline comment (leave blank to skip): ").strip() or None
+    if comment:
+        rule += f"  # {comment}"
 
     print("\nGenerated Rule:")
     print(rule)
@@ -179,8 +186,11 @@ def run(args):
             classtype=args.classtype,
             priority=args.priority,
             metadata=args.metadata,
-            reference=args.reference
+            reference=args.reference,
         )
+
+        if args.comment:
+            rule += f"  # {args.comment.strip()}"
 
         print("\nGenerated Rule:")
         print(rule)
