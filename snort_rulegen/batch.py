@@ -26,6 +26,7 @@ def run_batch(filepath, outfile="rules/local.rules", verbose=False, dry_run=Fals
         
         generated = 0
         skipped = 0
+        rules_to_write = []
 
         for idx, rule in enumerate(data, 1):
             try:
@@ -42,7 +43,7 @@ def run_batch(filepath, outfile="rules/local.rules", verbose=False, dry_run=Fals
                 pcre = validate_pcre(rule["pcre"]) if "pcre" in rule else None
                 classtype = rule.get("classtype")
                 priority = validate_priority(rule["priority"]) if "priority" in rule else None
-                metadata = validate_metadata(rule["metatdata"]) if "metadata" in rule else None
+                metadata = validate_metadata(rule["metadata"]) if "metadata" in rule else None
                 reference = validate_reference(rule["reference"]) if "reference" in rule else None
 
                 sid = get_next_sid()
@@ -60,14 +61,14 @@ def run_batch(filepath, outfile="rules/local.rules", verbose=False, dry_run=Fals
                     reference=reference
                 )
 
+                comment = rule.get("comment", "").strip()
+                if comment:
+                    snort_rule += f"  # {comment}"
+
                 if dry_run or verbose:
                     print(f"[Rule {idx}] {snort_rule}")
 
-                if not dry_run:
-                    dir_path = os.path.dirname(outfile) or "."
-                    os.makedirs(dir_path, exist_ok=True)
-                    with open(outfile, "a") as out:
-                        out.write(snort_rule + "\n")
+                rules_to_write.append(snort_rule)
 
                 generated += 1
             except Exception as e:
@@ -75,6 +76,20 @@ def run_batch(filepath, outfile="rules/local.rules", verbose=False, dry_run=Fals
                 skipped += 1
         
         print(f"\nBatch complete: {generated} rule(s) written, {skipped} skipped.")
+
+        if dry_run:
+            confirm = input("\nSave all displayed rules to file? [y/N]: ").strip().lower()
+            if confirm != "y":
+                print("Batch aborted, no rules written.")
+                return
+        
+        print(f"\nWriting {len(rules_to_write)} rule(s) to {outfile}...")
+        
+        dir_path = os.path.dirname(outfile) or "."
+        os.makedirs(dir_path, exist_ok=True)
+        with open(outfile, "a") as out:
+            for rule in rules_to_write:
+                out.write(rule + "\n")
 
     except Exception as e:
         print(f"Error reading batch file: {e}")

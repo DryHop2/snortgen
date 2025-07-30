@@ -145,6 +145,10 @@ def run_interactive():
 
     print("\nGenerated Rule:")
     print(rule)
+    confirm = input("\nSave this rule to file? [y/N]: ").strip().lower()
+    if confirm != "y":
+        print("Rule not saved.")
+        return
 
     # Save directory/file
     if os.path.exists(out_path):
@@ -194,6 +198,11 @@ def run(args):
 
         print("\nGenerated Rule:")
         print(rule)
+        if args.dry_run:
+            confirm = input("\nSave this rule to file? [y/N]: ").strip().lower()
+            if confirm != "y":
+                print("Rule not saved.")
+                return
 
         if args.verbose and os.path.exists(out_path):
             print(f"Warning: {out_path} already exists and will be appended to.")

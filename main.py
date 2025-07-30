@@ -175,6 +175,12 @@ def main():
         help="Optional comment to append after rule (e.g., '# Investigated on 2025-07-29)"
     )
 
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Preview rules(s) without writing to file"
+    )
+
     args = parser.parse_args()
 
     if args.batch:
