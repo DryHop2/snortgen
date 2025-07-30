@@ -20,7 +20,10 @@ def load_config(config_path: str | None = None) -> dict:
     for path in candidates:
         if path.exists():
             try:
-                return toml.load(path)
+                with open(path, "r") as f:
+                    data = toml.load(f)
+                    data["__source__"] = str(path)
+                    return data
             except Exception as e:
                 print(f"Warning: Failed to load config from {path}: {e}")
                 return {}

@@ -177,14 +177,34 @@ def main():
         help="Preview rules(s) without writing to file"
     )
 
+    parser.add_argument(
+        "--show-config",
+        type="store_true",
+        help="Display the current configuration file and resolved keys"
+    )
+
     args = parser.parse_args()
     config = load_config()
+
+    if args.verbose and config:
+        print(f"Using config overrides from: {config.get('__source__', 'unknown')}")
+        for key, value in config.items():
+            if not key.startswith("__"):
+                print(f"  {key} = {value}")
+
+    if args.show_config and config:
+        print(f"Using config from: {config.get('__source__', 'unknown')}")
+        for key, value in config.items():
+            if not key.startswith("__"):
+                print(f"  {key} = {value}")
+        return
 
     if args.batch:
         run_batch(
             filepath=args.batch,
             outfile=args.outfile if hasattr(args, "outfile") else None,
-            verbose=args.verbose if hasattr(args, "verbose") else False
+            verbose=args.verbose if hasattr(args, "verbose") else False,
+            config=config
         )
     elif args.interactive or len(vars(args)) == 1:
         run_interactive()

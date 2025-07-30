@@ -74,6 +74,10 @@ snort alert tcp any any -> $HOME_NET 80 (
 - Config file support (~/.snortgenrc or custom JSON)
 - CSV import for batch rules
 - Rule deduplication (ignore SID/msg on comparison)
+- Path validation
+- Error checking for no content
+- Refactoring
+- Update inline notation for functions and readability
 
 ### Stetch goals (as time allows or requests come in)
 - Advanced Snort options (e.g., HTTP specific options, byte_*, non-payload detection, etc.)
