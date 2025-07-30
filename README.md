@@ -69,15 +69,18 @@ snort alert tcp any any -> $HOME_NET 80 (
 - CLI argument validation and help docs
 - Dry-run mode for rule preview
 - Inline comment support (# appended to rule)
+- Config file support (~/.snortgenrc or custom JSON)
 
 ### Planned future enhancements:
-- Config file support (~/.snortgenrc or custom JSON)
 - CSV import for batch rules
 - Rule deduplication (ignore SID/msg on comparison)
 - Path validation
 - Error checking for no content
 - Refactoring
 - Update inline notation for functions and readability
+- Update README with new features
+- Unit testing
+- Sample batch .json and .csv
 
 ### Stetch goals (as time allows or requests come in)
 - Advanced Snort options (e.g., HTTP specific options, byte_*, non-payload detection, etc.)
