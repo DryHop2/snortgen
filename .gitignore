@@ -197,4 +197,4 @@ cython_debug/
 sid_state.txt
 rules/*.rules
 
-snortgen.config.toml
+snortsmith.config.toml

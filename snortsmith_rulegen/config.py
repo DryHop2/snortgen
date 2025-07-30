@@ -3,9 +3,9 @@ from pathlib import Path
 
 def load_config(config_path: str | None = None) -> dict:
     """
-    Load SnortGen config from provided path or from default locations:
-    - ./snortgen.config.toml
-    - ~/.snortgenrc
+    Load Snortsmith config from provided path or from default locations:
+    - ./snortsmith.config.toml
+    - ~/.snortsmithrc
     """
     candidates = []
 
@@ -13,8 +13,8 @@ def load_config(config_path: str | None = None) -> dict:
         candidates.append(Path(config_path))
     else:
         candidates.extend([
-            Path.cwd() / "snortgen.config.toml",
-            Path.home() / ".snortgenrc"
+            Path.cwd() / "snortsmith.config.toml",
+            Path.home() / ".snortsmithrc"
         ])
 
     for path in candidates:

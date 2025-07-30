@@ -1,9 +1,9 @@
 import argparse
 
-from snort_rulegen.config import load_config, get_config_value
-from snort_rulegen.snortgen import run_interactive, run
-from snort_rulegen.batch import run_batch
-from snort_rulegen.utils import (
+from snortsmith_rulegen.config import load_config, get_config_value
+from snortsmith_rulegen.snortsmith import run_interactive, run
+from snortsmith_rulegen.batch import run_batch
+from snortsmith_rulegen.utils import (
     validate_protocol,
     validate_ip,
     validate_port,
@@ -19,17 +19,17 @@ from snort_rulegen.utils import (
 
 def main():
     parser = argparse.ArgumentParser(
-        prog="snortgen",
+        prog="snortsmith",
         description=(
-            "SnortGen: An interactive CLI tool to generate Snort rules quickly.\n\n"
-            "SnortGen walks you through building a rule step-by-step. "
+            "Snortsmith: An interactive CLI tool to generate Snort rules quickly.\n\n"
+            "Snortsmith walks you through building a rule step-by-step. "
             "It supports common fields like protocol, IP, port, content matching, PCRE, flags, "
             "classtype, metadata, and more. SID assignment is automatic and rules are saved to "
             "'rules/local.rules' by default.\n\n"
             "Designed for security engineers, analysts, and anyone who wants to generate Snort rules "
             "without memorizing syntax."
         ),
-        epilog="More info: https://github.com/DryHop2/snortgen",
+        epilog="More info: https://github.com/DryHop2/snortsmith",
         formatter_class=argparse.RawTextHelpFormatter
     )
 
@@ -42,7 +42,7 @@ def main():
     parser.add_argument(
         "--version",
         action="version",
-        version="Snortgen 1.0.0"
+        version="Snortsmith 1.0.0"
     )
 
     parser.add_argument(

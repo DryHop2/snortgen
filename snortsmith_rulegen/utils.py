@@ -3,7 +3,7 @@ import argparse
 import re
 import os
 
-from snort_rulegen.config import get_config_value
+from snortsmith_rulegen.config import get_config_value
 
 
 def validate_protocol(value: str) -> str:
