@@ -67,11 +67,11 @@ snort alert tcp any any -> $HOME_NET 80 (
 - Rule output with configurable SID and message
 - JSON-based batch mode
 - CLI argument validation and help docs
+- Dry-run mode for rule preview
+- Inline comment support (# appended to rule)
 
 ### Planned future enhancements:
 - Config file support (~/.snortgenrc or custom JSON)
-- Dry-run mode for rule preview
-- Inline comment support (# appended to rule)
 - CSV import for batch rules
 - Rule deduplication (ignore SID/msg on comparison)
 

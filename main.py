@@ -1,5 +1,6 @@
 import argparse
 
+from snort_rulegen.config import load_config, get_config_value
 from snort_rulegen.snortgen import run_interactive, run
 from snort_rulegen.batch import run_batch
 from snort_rulegen.utils import (
@@ -47,35 +48,30 @@ def main():
     parser.add_argument(
         "--proto",
         type=argparse_type(validate_protocol),
-        default="tcp",
         help="Protocol to use for the rule (default: tcp; options: tcp, udp, icmp, ip)"
     )
 
     parser.add_argument(
         "--src-ip",
         type=argparse_type(validate_ip),
-        default="any",
         help="Source IP to use for the rule (default: any)"
     )
 
     parser.add_argument(
         "--src-port",
         type=argparse_type(validate_port),
-        default="any",
         help="Source port to use for the rule (default: any)"
     )
 
     parser.add_argument(
         "--dst-ip",
         type=argparse_type(validate_ip),
-        default="$HOME_NET",
         help="Destination IP to use for the rule (default: $HOME_NET)"
     )
 
     parser.add_argument(
         "--dst-port",
         type=argparse_type(validate_port),
-        default="80",
         help="Destination port to use for the rule (default: 80)"
     )
 
@@ -182,6 +178,7 @@ def main():
     )
 
     args = parser.parse_args()
+    config = load_config()
 
     if args.batch:
         run_batch(
@@ -192,7 +189,7 @@ def main():
     elif args.interactive or len(vars(args)) == 1:
         run_interactive()
     else:
-        run(args)
+        run(args, config)
 
 if __name__ == "__main__":
     main()
