@@ -3,6 +3,8 @@ import argparse
 import re
 import os
 
+from snort_rulegen.config import get_config_value
+
 
 def validate_protocol(value: str) -> str:
     """Validate protocol for Snort rules (tcp, udp, icmp, ip)"""
@@ -161,3 +163,7 @@ def get_latest_revision(outfile: str, sid: int) -> int:
                 max_rev = max(max_rev, rev)
 
     return max_rev + 1 if max_rev else 1
+
+
+def resolve(arg_val, config: dict, key: str, fallback=None):
+    return arg_val if arg_val is not None else get_config_value(config, key, fallback)
