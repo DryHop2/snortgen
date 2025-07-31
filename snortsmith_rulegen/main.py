@@ -55,7 +55,7 @@ def main():
 
     parser.add_argument(
         "--show-config",
-        type="store_true",
+        action="store_true",
         help="Display the current configuration file and resolved keys"
     )
 

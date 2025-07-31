@@ -1,6 +1,6 @@
 import os
 
-from snortsmith_rulegen._rule_templates import build_rule
+from snortsmith_rulegen._rule_templates import _build_rule
 from snortsmith_rulegen._sid_manager import _get_next_sid
 from snortsmith_rulegen._utils import (
     _validate_protocol,
@@ -128,7 +128,7 @@ def run_interactive() -> None:
     rev = _get_latest_revision(out_path, sid)
 
     # Rule construction
-    rule = build_rule(proto=proto, 
+    rule = _build_rule(proto=proto, 
                       src_ip=src_ip, 
                       src_port=src_port, 
                       dst_ip=dst_ip, 
@@ -199,7 +199,7 @@ def run(args, config=None) -> None:
         rev = _get_latest_revision(out_path, sid)
 
         # Build rule from inputs
-        rule = build_rule(
+        rule = _build_rule(
             proto=_resolve(args.proto, config, "default_proto", "tcp"),
             src_ip=_resolve(args.src_ip, config, "default_src_ip", "any"),
             src_port=_resolve(args.src_port, config, "default_src_port", "any"),

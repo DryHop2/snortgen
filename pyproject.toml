@@ -3,7 +3,7 @@ name = "snortsmith"
 version = "1.0.0"
 description = "A CLI-assisted Snort rule generator"
 readme = "README.md"
-authors = [{ name = "Tyler Smith", email = "tyler.savon.smith@gmail.com }]
+authors = [{ name = "Tyler Smith", email = "tyler.savon.smith@gmail.com" }]
 license = "MIT"
 dependencies = [
     "toml"
@@ -11,3 +11,6 @@ dependencies = [
 
 [project.scripts]
 snortsmith = "snortsmith_rulegen.main:main"
+
+[tool.setuptools]
+packages = ["snortsmith_rulegen"]
