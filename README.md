@@ -43,21 +43,46 @@ docker-compose run --rm dev
 ```
 pip install -r requirements.txt
 python main.py -h
+pip install .  # installs the snortsmith CLI
 ```
+
+## Usage
 
 ### Rule generation
 
 Run with interactive prompts
 
 ```
-python3 main.py --interactive
+snortsmith --interactive
 ```
 
-Or run with CLI flags for non-interactive use
+Run with CLI flags for non-interactive use
 
 ```
-python3 main.py --proto tcp --src-ip any --dst-ip $HOME_NET --dst-port 80 --content "wget" --msg "Suspicious download"
+snortsmith --proto tcp --src-ip any --dst-ip $HOME_NET --dst-port 80 --content "wget" --msg "Suspicious download"
 ```
+
+Batch mode (from JSON file)
+
+```
+snortsmith --batch path/to/rules.json
+```
+
+Dry-run preview mode
+
+```
+snortsmith --proto udp --dst-port 53 --content "dns" --dry-run
+```
+### Programmatic API Usage
+
+You can also use Snortsmith as a Python module:
+
+```
+from snortsmith_rulegen import run_batch
+
+run_batch(filepath="rules/example.json", dry_run=True)
+```
+Or use `run()` or `run_interactive()` for CLI-style behavior and single rule generation.
 
 ## Example Rule Output
 
@@ -92,7 +117,7 @@ default_outfile = "rules/dns.rules"
 Add a sample file with:
 
 ```
-cp snortmith.config.example.toml snortsmith.config.toml
+cp snortsmith.config.example.toml snortsmith.config.toml
 ```
 
 ## Roadmap
@@ -106,27 +131,23 @@ cp snortmith.config.example.toml snortsmith.config.toml
 - CLI argument validation and help docs
 - Dry-run mode for rule preview
 - Inline comment support (# appended to rule)
-- Config file support (~/.snortgenrc or custom JSON)
+- Config file support via TOML
 
 ### Planned future enhancements:
 - CSV import for batch rules
 - Rule deduplication (ignore SID/msg on comparison)
-- Path validation
-- Error checking for no content
-- Refactoring
-- Update inline notation for functions and readability
-- Update README with new features
+- Error checking for missing content
+- Path and field validation
 - Unit testing
 - Sample batch .json and .csv
 - SID reset
 
 ### Stetch goals (as time allows or requests come in)
 - Advanced Snort options (e.g., HTTP specific options, byte_*, non-payload detection, etc.)
-- Team support options
-- Local installation/packaging
 - Rule linter/validator
 - Snort rule diffing and comparison
-- Interactive TUI interface
+- Interactive UI interface
+- Mutli-user/team config management
 
 ## Requirements
 * Python 3.10+
