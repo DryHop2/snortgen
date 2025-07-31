@@ -18,6 +18,13 @@ from snortsmith_rulegen.utils import (
 
 
 def main():
+    """
+    Entry point for the Snortsmith CLI tool.
+
+    Parses commandline arguments, loads configuation overrides, and routes execution to either
+    interactive mode, batch mode, or single rule generation.
+    """
+
     parser = argparse.ArgumentParser(
         prog="snortsmith",
         description=(
@@ -33,6 +40,7 @@ def main():
         formatter_class=argparse.RawTextHelpFormatter
     )
 
+    # CLI mode switches
     parser.add_argument(
         "-i", "--interactive",
         action="store_true",
@@ -45,6 +53,13 @@ def main():
         version="Snortsmith 1.0.0"
     )
 
+    parser.add_argument(
+        "--show-config",
+        type="store_true",
+        help="Display the current configuration file and resolved keys"
+    )
+
+    # Basic rule structure
     parser.add_argument(
         "--proto",
         type=argparse_type(validate_protocol),
@@ -75,6 +90,7 @@ def main():
         help="Destination port to use for the rule (default: 80)"
     )
 
+    # Matching logic
     parser.add_argument(
         "--content",
         type=str,
@@ -111,6 +127,7 @@ def main():
         help="Perl-compatible regex pattern (e.g., /user.*=root/i)"
     )
 
+    # Rule metadata
     parser.add_argument(
         "--classtype",
         type=str,
@@ -142,6 +159,13 @@ def main():
     )
 
     parser.add_argument(
+        "--comment",
+        type=str,
+        help="Optional comment to append after rule (e.g., '# Investigated on 2025-07-29)"
+    )
+
+    # Output and behavior modifiers
+    parser.add_argument(
         "--outfile",
         type=str,
         help="Path to save generated Snort rule (default: rules/local.rules)"
@@ -166,50 +190,48 @@ def main():
     )
 
     parser.add_argument(
-        "--comment",
-        type=str,
-        help="Optional comment to append after rule (e.g., '# Investigated on 2025-07-29)"
-    )
-
-    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Preview rules(s) without writing to file"
     )
 
-    parser.add_argument(
-        "--show-config",
-        type="store_true",
-        help="Display the current configuration file and resolved keys"
-    )
-
     args = parser.parse_args()
     config = load_config()
 
+    # Verbose config display if applicable
     if args.verbose and config:
         print(f"Using config overrides from: {config.get('__source__', 'unknown')}")
         for key, value in config.items():
             if not key.startswith("__"):
                 print(f"  {key} = {value}")
 
-    if args.show_config and config:
-        print(f"Using config from: {config.get('__source__', 'unknown')}")
-        for key, value in config.items():
-            if not key.startswith("__"):
-                print(f"  {key} = {value}")
+    if args.show_config:
+        if not config:
+            print("No configuration file found.")
+        else:
+            print(f"Using config from: {config.get('__source__', 'unknown')}")
+            for key, value in config.items():
+                if not key.startswith("__"):
+                    print(f"  {key} = {value}")
         return
+    
+    # Execution flow: batch > interactive > CLI
 
-    if args.batch:
-        run_batch(
-            filepath=args.batch,
-            outfile=args.outfile if hasattr(args, "outfile") else None,
-            verbose=args.verbose if hasattr(args, "verbose") else False,
-            config=config
-        )
-    elif args.interactive or len(vars(args)) == 1:
-        run_interactive()
-    else:
-        run(args, config)
+    try:
+        if args.batch:
+            run_batch(
+                filepath=args.batch,
+                outfile=args.outfile,
+                verbose=args.verbose,
+                config=config
+            )
+        elif args.interactive or len(vars(args)) == 1:
+            run_interactive()
+        else:
+            run(args, config)
+    except Exception as e:
+        print(F"[ERROR] An error occurred while running Snortsmith: {e}")
+        exit(1)
 
 if __name__ == "__main__":
     main()

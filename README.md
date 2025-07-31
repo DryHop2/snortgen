@@ -118,6 +118,7 @@ cp snortmith.config.example.toml snortsmith.config.toml
 - Update README with new features
 - Unit testing
 - Sample batch .json and .csv
+- SID reset
 
 ### Stetch goals (as time allows or requests come in)
 - Advanced Snort options (e.g., HTTP specific options, byte_*, non-payload detection, etc.)

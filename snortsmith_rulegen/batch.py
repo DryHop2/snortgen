@@ -18,12 +18,23 @@ from snortsmith_rulegen.utils import (
 )
 
 def run_batch(filepath, outfile="rules/local.rules", verbose=False, dry_run=False, config=None):
+    """
+    Processes a JSON file of rule definitions and writes valid Snort rules to the specified output file(s).
+
+    Args:
+        filepath (str): Path to the JSON file containing a list of rule dicts.
+        outfile (str): Default output file path if not overridden per rule.
+        verbose (bool): If True, prints generated rules and status messages.
+        dry_run (bool): If True, rules are previewed but not saved unless user confirms.
+        config (dict): Optional config overrides (usually from snortsmith.conf).
+    """
+
     try:
         with open(filepath, "r") as f:
             data = json.load(f)
 
         if not isinstance(data, list):
-            print("Error: batch file must contain a list of rule objects.")
+            print("[ERROR] Batch file must contain a list of rule objects.")
             return
         
         generated = 0
@@ -34,6 +45,7 @@ def run_batch(filepath, outfile="rules/local.rules", verbose=False, dry_run=Fals
 
         for idx, rule in enumerate(data, 1):
             try:
+                # Resolve values from rule -> config -> fallback
                 out_path = resolve(rule.get("outfile"), config, "default_outfile", "rules/local.rules")
                 proto = validate_protocol(resolve(rule.get("proto"), config, "default_proto", "tcp"))
                 src_ip = validate_ip(resolve(rule.get("src_ip"), config, "default_src_ip", "any"))
@@ -54,11 +66,13 @@ def run_batch(filepath, outfile="rules/local.rules", verbose=False, dry_run=Fals
                 metadata = validate_metadata(resolve(rule.get("metadata"), config, "default_metadata", None)) if rule.get("metadata") or config.get("default_metadata") else None
                 reference = validate_reference(resolve(rule.get("reference"), config, "default_reference", None)) if rule.get("reference") or config.get("default_reference") else None
 
-
+                # SID + revision tracking
                 sid = resolve(rule.get("sid"), config, "sid", None)
                 if sid is None:
                     sid = get_next_sid()
                 rev = get_latest_revision(out_path, sid)
+
+                # Build rule string
                 snort_rule = build_rule(
                     proto=proto, 
                     src_ip=src_ip, 
@@ -80,10 +94,12 @@ def run_batch(filepath, outfile="rules/local.rules", verbose=False, dry_run=Fals
                     reference=reference
                 )
 
+                # Optional comment
                 comment = rule.get("comment", "").strip()
                 if comment:
                     snort_rule += f"  # {comment}"
-
+                
+                # Preview rule if requested
                 if dry_run or verbose:
                     print(f"[Rule {idx}] {snort_rule}")
 
@@ -96,16 +112,19 @@ def run_batch(filepath, outfile="rules/local.rules", verbose=False, dry_run=Fals
         
         print(f"\nBatch complete: {generated} rule(s) written, {skipped} skipped.")
 
+        # Dry run confirmation prompt
         if dry_run:
             confirm = input("\nSave all displayed rules to file? [y/N]: ").strip().lower()
             if confirm != "y":
                 print("Batch aborted, no rules written.")
                 return
-            
+        
+        # Group rules output path
         file_groups = {}
         for rule, path in rules_to_write:
             file_groups.setdefault(path, []).append(rule)
 
+        # Write rules to their respective output files
         for path, rules in file_groups.items():
             print(f"\nWriting {len(rules)} rule(s) to {path}...")
             dir_path = os.path.dirname(outfile) or "."
@@ -114,5 +133,9 @@ def run_batch(filepath, outfile="rules/local.rules", verbose=False, dry_run=Fals
                 for rule in rules:
                     out.write(rule + "\n")
 
+    except FileNotFoundError:
+        print(f"[ERROR] Batch file not found: {filepath}")
+    except json.JSONDecodeError as e:
+        print(f"[ERROR] Invalid JSON in batch file: {e}")
     except Exception as e:
-        print(f"Error reading batch file: {e}")
+        print(f"[ERROR] Unexpected error during batch processing: {e}")

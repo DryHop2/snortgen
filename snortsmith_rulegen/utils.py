@@ -1,3 +1,10 @@
+"""
+utils.py
+
+Contains validation utilities, type adapaters for argparse, configuration resolvers, 
+and helper functions for rule generation and SID management in Snortsmith
+"""
+
 import ipaddress
 import argparse
 import re
@@ -52,7 +59,13 @@ def validate_priority(value: str) -> str:
     
 
 def validate_offset_depth(offset: str | None, depth: str | None) -> tuple[int | None, int | None]:
-    """Validate and return offset and depth as integers if valid. Raise ValueError otherwise."""
+    """
+    Validate and return offset and depth as integers if valid. 
+    Ensures offset is not greater than depth.
+    
+    Returns:
+        tuple[int | None, int | None]: (offset, depth)
+    """
     offset_val = int(offset) if offset and offset.isdigit() else None
     depth_val = int(depth) if depth and depth.isdigit() else None
 
@@ -65,8 +78,7 @@ def validate_offset_depth(offset: str | None, depth: str | None) -> tuple[int | 
 def validate_flags(flags: str) -> str:
     """
     Validate TCP flags for Snort rules.
-    Allows flag character, modifiers, and separators:
-    F, S, R, P, A, U, C, E, 0, *, +, !, ,
+    Allows flag character, modifiers, and separators: F, S, R, P, A, U, C, E, 0, *, +, !, ,
     """
     allowed_chars = set("FSRPAUCE0*+!,")
     if all(c in allowed_chars for c in flags):
@@ -75,14 +87,17 @@ def validate_flags(flags: str) -> str:
 
 
 def validate_pcre(pcre: str) -> str:
-    """Validate basic structure of a PCRE string for Snort."""
+    """Validate basic PCRE syntax: must be wrapped in slashes (/pattern/modifiers)."""
     if not (pcre.startswith("/") and "/" in pcre[1:]):
         raise ValueError("Invalid PCRE format. Must start with and have closing '/'.")
     return pcre
 
 
 def validate_metadata(data: str) -> str:
-    """Validate metadata is using key value pairs and comma delimiter."""
+    """
+    Validate metadata is using key value pairs and comma delimiter.
+    Example valid input: "os linux, author admin"
+    """
     parts = [item.strip() for item in data.split(",") if item.strip()]
 
     for part in parts:
@@ -104,7 +119,13 @@ def validate_metadata(data: str) -> str:
 
 
 def validate_msg(value: str) -> str:
-    """Check that reserved characters in message are properly escaped."""
+    """
+    Escape reserved characters in Snort msg fields:
+    ; \ " | ' \; → \\ \" \| \;
+    
+    Returns:
+        str: Escaped message string
+    """
     reserved = {
         ";": r"\;",
         "\\": r"\\",
@@ -125,7 +146,12 @@ def validate_msg(value: str) -> str:
 
 
 def validate_reference(value: str) -> str:
-    """Validate that reference is in format scheme,id"""
+    """
+    Validate that reference is in format scheme,id
+    Examples:
+        url,http://example.com
+        cve,2021-12345
+    """
     if "," not in value:
         raise ValueError("Reference must be in format: scheme,id")
     
@@ -140,6 +166,10 @@ def validate_reference(value: str) -> str:
 
 
 def argparse_type(func):
+    """
+    Wrap a validation function for use with argparse type= arguments.
+    Converts ValueError to argparse.ArgumentTypeError.
+    """
     def wrapper(value):
         try:
             return func(value)
@@ -149,6 +179,18 @@ def argparse_type(func):
 
 
 def get_latest_revision(outfile: str, sid: int) -> int:
+    """
+    Get the next revision number for a rule based on SID.
+
+    Scans the given file and returns the latest revision + 1 or 1 if the SID is not found.
+
+    Args:
+        outfile (str): Path to the rule file.
+        sid (int): SID to look for.
+
+    Returns:
+        int: The next revision number.
+    """
     if not os.path.exists(outfile):
         return 1
     
@@ -166,4 +208,19 @@ def get_latest_revision(outfile: str, sid: int) -> int:
 
 
 def resolve(arg_val, config: dict, key: str, fallback=None):
+    """
+    Resolve a value from multiple sources in order of priority:
+    1. Direct CLI argument value (arg_val)
+    2. Config file value for the key
+    3. Hardcoded fallback default
+
+    Args:
+        arg_val (Any): Direct argument (e.g., from argparse).
+        config (dict): Loaded config dictionary.
+        key (str): Config key to resolve.
+        fallback (Any): Default value if key is not found.
+
+    Returns:
+        Any: Resolved value
+    """
     return arg_val if arg_val is not None else get_config_value(config, key, fallback)
