@@ -1,0 +1,13 @@
+[project]
+name = "snortsmith"
+version = "1.0.0"
+description = "A CLI-assisted Snort rule generator"
+readme = "README.md"
+authors = [{ name = "Tyler Smith", email = "tyler.savon.smith@gmail.com }]
+license = "MIT"
+dependencies = [
+    "toml"
+]
+
+[project.scripts]
+snortsmith = "snortsmith_rulegen.main:main"

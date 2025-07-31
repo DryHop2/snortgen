@@ -198,3 +198,4 @@ sid_state.txt
 rules/*.rules
 
 snortsmith.config.toml
+*.pyc
