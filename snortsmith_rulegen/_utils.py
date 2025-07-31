@@ -10,10 +10,10 @@ import argparse
 import re
 import os
 
-from snortsmith_rulegen.config import get_config_value
+from snortsmith_rulegen._config import _get_config_value
 
 
-def validate_protocol(value: str) -> str:
+def _validate_protocol(value: str) -> str:
     """Validate protocol for Snort rules (tcp, udp, icmp, ip)"""
     allowed = {"tcp", "udp", "icmp", "ip"}
     val = value.lower()
@@ -22,7 +22,7 @@ def validate_protocol(value: str) -> str:
     raise ValueError(f"Invalid protocol: '{value}'. Must be one of {', '.join(allowed)}.")
 
 
-def validate_ip(value: str) -> str:
+def _validate_ip(value: str) -> str:
     """Validate IP address or allow 'any' and Snort-style vars like $HOME_NET."""
     if value.lower() == "any" or value.startswith("$"):
         return value
@@ -33,7 +33,7 @@ def validate_ip(value: str) -> str:
         raise ValueError(f"Invalid IP address: {value}")
     
 
-def validate_port(value: str) -> str:
+def _validate_port(value: str) -> str:
     """Validate port number or allow 'any'."""
     if value.lower() == "any":
         return "any"
@@ -47,7 +47,7 @@ def validate_port(value: str) -> str:
         raise ValueError("Invalid port: must be an integer or 'any'.")
     
 
-def validate_priority(value: str) -> str:
+def _validate_priority(value: str) -> str:
     """Validate Snort priority (1 - 2,147,483,647)."""
     try:
         priority = int(value)
@@ -58,7 +58,7 @@ def validate_priority(value: str) -> str:
         raise ValueError("Invalid priority: must be an integer.")
     
 
-def validate_offset_depth(offset: str | None, depth: str | None) -> tuple[int | None, int | None]:
+def _validate_offset_depth(offset: str | None, depth: str | None) -> tuple[int | None, int | None]:
     """
     Validate and return offset and depth as integers if valid. 
     Ensures offset is not greater than depth.
@@ -75,7 +75,7 @@ def validate_offset_depth(offset: str | None, depth: str | None) -> tuple[int | 
     return offset_val, depth_val
 
 
-def validate_flags(flags: str) -> str:
+def _validate_flags(flags: str) -> str:
     """
     Validate TCP flags for Snort rules.
     Allows flag character, modifiers, and separators: F, S, R, P, A, U, C, E, 0, *, +, !, ,
@@ -86,14 +86,14 @@ def validate_flags(flags: str) -> str:
     raise ValueError(f"Invalid character in TCP flags: {flags}")
 
 
-def validate_pcre(pcre: str) -> str:
+def _validate_pcre(pcre: str) -> str:
     """Validate basic PCRE syntax: must be wrapped in slashes (/pattern/modifiers)."""
     if not (pcre.startswith("/") and "/" in pcre[1:]):
         raise ValueError("Invalid PCRE format. Must start with and have closing '/'.")
     return pcre
 
 
-def validate_metadata(data: str) -> str:
+def _validate_metadata(data: str) -> str:
     """
     Validate metadata is using key value pairs and comma delimiter.
     Example valid input: "os linux, author admin"
@@ -118,7 +118,7 @@ def validate_metadata(data: str) -> str:
     return data
 
 
-def validate_msg(value: str) -> str:
+def _validate_msg(value: str) -> str:
     """
     Escape reserved characters in Snort msg fields:
     ; \ " | ' \; → \\ \" \| \;
@@ -145,7 +145,7 @@ def validate_msg(value: str) -> str:
     return escaped
 
 
-def validate_reference(value: str) -> str:
+def _validate_reference(value: str) -> str:
     """
     Validate that reference is in format scheme,id
     Examples:
@@ -165,7 +165,7 @@ def validate_reference(value: str) -> str:
     return f"{scheme},{id_}"
 
 
-def argparse_type(func):
+def _argparse_type(func):
     """
     Wrap a validation function for use with argparse type= arguments.
     Converts ValueError to argparse.ArgumentTypeError.
@@ -178,7 +178,7 @@ def argparse_type(func):
     return wrapper
 
 
-def get_latest_revision(outfile: str, sid: int) -> int:
+def _get_latest_revision(outfile: str, sid: int) -> int:
     """
     Get the next revision number for a rule based on SID.
 
@@ -207,7 +207,7 @@ def get_latest_revision(outfile: str, sid: int) -> int:
     return max_rev + 1 if max_rev else 1
 
 
-def resolve(arg_val, config: dict, key: str, fallback=None):
+def _resolve(arg_val, config: dict, key: str, fallback=None):
     """
     Resolve a value from multiple sources in order of priority:
     1. Direct CLI argument value (arg_val)
@@ -223,4 +223,4 @@ def resolve(arg_val, config: dict, key: str, fallback=None):
     Returns:
         Any: Resolved value
     """
-    return arg_val if arg_val is not None else get_config_value(config, key, fallback)
+    return arg_val if arg_val is not None else _get_config_value(config, key, fallback)

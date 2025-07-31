@@ -2,7 +2,7 @@ import toml
 from pathlib import Path
 from typing import Any
 
-def load_config(config_path: str | None = None) -> dict[str, Any]:
+def _load_config(config_path: str | None = None) -> dict[str, Any]:
     """
     Load Snortsmith configuration from a TOML file.
 
@@ -42,7 +42,7 @@ def load_config(config_path: str | None = None) -> dict[str, Any]:
     return {}
 
 
-def get_config_value(config: dict[str, Any], key: str, fallback: Any) -> Any:
+def _get_config_value(config: dict[str, Any], key: str, fallback: Any) -> Any:
     """
     Retrieves a config value with fallback if the key is missing.
 

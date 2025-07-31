@@ -1,4 +1,4 @@
-def build_rule(
+def _build_rule(
     proto: str, 
     src_ip: str, 
     src_port: str, 

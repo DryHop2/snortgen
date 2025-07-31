@@ -10,7 +10,7 @@ import os
 SID_FILE = "sid_state.txt"
 DEFAULT_START = 1000001
 
-def get_next_sid() -> int:
+def _get_next_sid() -> int:
     """
     Retrieves the next available SID by reading and incrementing a local file.
 
