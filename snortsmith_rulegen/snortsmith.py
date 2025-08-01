@@ -163,8 +163,13 @@ def run_interactive() -> None:
     # Output to file
     if os.path.exists(out_path):
         print(f"Warning: {out_path} already exists and will be appended to.")
-    dir_path = os.path.dirname(out_path) or "."
-    os.makedirs(dir_path, exist_ok=True)
+    try:
+        dir_path = os.path.dirname(out_path) or "."
+        os.makedirs(dir_path, exist_ok=True)
+        with open(out_path, "a"):
+            pass
+    except Exception as e:
+        raise IOError(f"Cannot write to output file '{out_path}': {e}")
 
     with open(out_path, "a") as f:
         f.write(rule + "\n")
@@ -234,8 +239,14 @@ def run(args, config=None) -> None:
 
         if args.verbose and os.path.exists(out_path):
             print(f"Warning: {out_path} already exists and will be appended to.")
-        dir_path = os.path.dirname(out_path) or "."
-        os.makedirs(dir_path, exist_ok=True)
+        
+        try:
+            dir_path = os.path.dirname(out_path) or "."
+            os.makedirs(dir_path, exist_ok=True)
+            with open(out_path, "a"):
+                pass
+        except Exception as e:
+            raise IOError(f"Cannot write to output file '{out_path}': {e}")
 
         with open(out_path, "a") as f:
             f.write(rule + "\n")

@@ -107,7 +107,7 @@ def run_batch(filepath, outfile="rules/local.rules", verbose=False, dry_run=Fals
                 generated += 1
 
             except Exception as e:
-                print(f"[Rule {idx}] Skipped: {e}")
+                print(f"[Rule {idx}] Skipped due to error: {type(e).__name__} - {e}")
                 skipped += 1
         
         print(f"\nBatch complete: {generated} rule(s) written, {skipped} skipped.")
@@ -127,8 +127,13 @@ def run_batch(filepath, outfile="rules/local.rules", verbose=False, dry_run=Fals
         # Write rules to their respective output files
         for path, rules in file_groups.items():
             print(f"\nWriting {len(rules)} rule(s) to {path}...")
-            dir_path = os.path.dirname(outfile) or "."
-            os.makedirs(dir_path, exist_ok=True)
+            try:
+                dir_path = os.path.dirname(path) or "."
+                os.makedirs(dir_path, exist_ok=True)
+                with open(path, "a"):
+                    pass
+            except Exception as e:
+                raise IOError(f"Cannot write to output file '{path}': {e}")
             with open(path, "a") as out:
                 for rule in rules:
                     out.write(rule + "\n")
