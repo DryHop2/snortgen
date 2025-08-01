@@ -79,6 +79,9 @@ def run_interactive() -> None:
         except ValueError as e:
             print(f"PCRE error: {e}")
             pcre = None
+
+    if not content and not pcre:
+        print("[WARNING] No content or PCRE specified. Rules are recommended to have some form of content matching.")
     
     # Optional: Classtype and priority
     classtype = input("Set classtype (e.g., attempted-admin, leave blank to skip): ").strip().lower()
@@ -239,6 +242,9 @@ def run(args, config=None) -> None:
 
         if args.verbose and os.path.exists(out_path):
             print(f"Warning: {out_path} already exists and will be appended to.")
+
+        if not args.content and not args.pcre:
+            print("[WARNING] No content or PCRE specified. Rules are recommended to have some form of content matching.")
         
         try:
             dir_path = os.path.dirname(out_path) or "."
