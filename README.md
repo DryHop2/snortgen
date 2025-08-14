@@ -132,9 +132,9 @@ cp snortsmith.config.example.toml snortsmith.config.toml
 - Dry-run mode for rule preview
 - Inline comment support (# appended to rule)
 - Config file support via TOML
+- CSV import for batch rules
 
 ### Planned future enhancements:
-- CSV import for batch rules
 - Rule deduplication (ignore SID/msg on comparison)
 - Unit testing
 - Sample batch .json and .csv
