@@ -136,8 +136,6 @@ cp snortsmith.config.example.toml snortsmith.config.toml
 ### Planned future enhancements:
 - CSV import for batch rules
 - Rule deduplication (ignore SID/msg on comparison)
-- Error checking for missing content
-- Path and field validation
 - Unit testing
 - Sample batch .json and .csv
 - SID reset
