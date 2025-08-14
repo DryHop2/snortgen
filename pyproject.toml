@@ -14,3 +14,8 @@ snortsmith = "snortsmith_rulegen.main:main"
 
 [tool.setuptools]
 packages = ["snortsmith_rulegen"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+python_files = "test_*.py"
+testpaths = ["tests"]
