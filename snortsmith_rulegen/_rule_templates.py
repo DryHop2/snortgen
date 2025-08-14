@@ -38,7 +38,7 @@ def _build_rule(
         pcre (str | None): Perl-compatible regex pattern.
         classtype (str | None): Classification type.
         priority (int | None): Priority value for alerting.
-        metatdata (str | None): Metadata key-value pairs.
+        metadata (str | None): Metadata key-value pairs.
         reference (str | None): External reference link or ID.
 
     Returns:

@@ -174,7 +174,7 @@ def main():
     parser.add_argument(
         "-v", "--verbose",
         action="store_true",
-        help="Enable verbose outplut (e.g., file and directory warnings, internal steps)"
+        help="Enable verbose output (e.g., file and directory warnings, internal steps)"
     )
 
     parser.add_argument(
@@ -218,6 +218,7 @@ def main():
     # Execution flow: batch > interactive > CLI
 
     try:
+        defaults = parser.parse_args([]) # simulate no args
         if args.batch:
             run_batch(
                 filepath=args.batch,
@@ -225,7 +226,10 @@ def main():
                 verbose=args.verbose,
                 config=config
             )
-        elif args.interactive or len(vars(args)) == 1:
+        elif args.interactive or all(
+            getattr(args, k) == getattr(defaults, k)
+            for k in vars(args)
+        ):
             run_interactive()
         else:
             run(args, config)

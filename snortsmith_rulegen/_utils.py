@@ -92,6 +92,7 @@ def _validate_pcre(pcre: str) -> str:
         raise ValueError("Invalid PCRE format. Must start with and have closing '/'.")
     return pcre
 
+METADATA_KEY_PATTERN = re.compile(r"^[A-Za-z0-9_-]+$")
 
 def _validate_metadata(data: str) -> str:
     """
@@ -106,9 +107,9 @@ def _validate_metadata(data: str) -> str:
                 f"Invalid metadata segment '{part}'. Each entry should be a key-value pair like 'key value'."
             )
         key, val = part.split(" ", 1)
-        if not key.isidentifier():
+        if not METADATA_KEY_PATTERN.match(key):
             raise ValueError(
-                f"Invalid metadata key '{key}'. Keys should be alphanumeric and start with a letter."
+                f"Invalid metadata key '{key}'. Keys should be alphanumeric, underscores, or hyphens."
             )
         if not val:
             raise ValueError(
@@ -131,16 +132,16 @@ def _validate_msg(value: str) -> str:
         "\\": r"\\",
         "\"": r"\"",
         "|": r"\|",
-        "'": r"\;"
+        "'": r"\'"
     }
 
-    def escape_char(match):
+    def _escape_char(match):
         """Escape reserved characters if not escaped already"""
         char = match.group(0)
         return reserved[char]
     
     pattern = r'(?<!\\)([;\\\"|\'])'
-    escaped = re.sub(pattern, escape_char, value)
+    escaped = re.sub(pattern, _escape_char, value)
 
     return escaped
 
