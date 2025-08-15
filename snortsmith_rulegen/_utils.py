@@ -129,7 +129,7 @@ def _validate_metadata(data: str) -> str:
 def _validate_msg(value: str) -> str:
     """
     Escape reserved characters in Snort msg fields:
-    ; \ " | ' \; → \\ \" \| \;
+    ; \ " | ' → \; \\ \" \| \'
     
     Returns:
         str: Escaped message string
