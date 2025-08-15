@@ -1,8 +1,5 @@
 import sys
-import types
 import importlib
-import builtins
-import pytest
 
 
 def test_main_no_args_goes_interactive(monkeypatch):
