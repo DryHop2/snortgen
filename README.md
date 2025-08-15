@@ -133,12 +133,14 @@ cp snortsmith.config.example.toml snortsmith.config.toml
 - Inline comment support (# appended to rule)
 - Config file support via TOML
 - CSV import for batch rules
+- Unit testing
 
 ### Planned future enhancements:
 - Rule deduplication (ignore SID/msg on comparison)
-- Unit testing
+- Expanded unit testing for edge cases
 - Sample batch .json and .csv
 - SID reset
+- flow flag
 
 ### Stetch goals (as time allows or requests come in)
 - Advanced Snort options (e.g., HTTP specific options, byte_*, non-payload detection, etc.)

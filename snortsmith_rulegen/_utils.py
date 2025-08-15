@@ -79,11 +79,18 @@ def _validate_flags(flags: str) -> str:
     """
     Validate TCP flags for Snort rules.
     Allows flag character, modifiers, and separators: F, S, R, P, A, U, C, E, 0, *, +, !, ,
+    Snort 3 ignores extra whitespace, but Snort 2 does not.
+    Canonicalizes by stripping whitespace to remain compatible with both 2 and 3.
     """
     allowed_chars = set("FSRPAUCE0*+!,")
-    if all(c in allowed_chars for c in flags):
-        return flags.upper()
-    raise ValueError(f"Invalid character in TCP flags: {flags}")
+    norm = re.sub(r"\s+", "", flags)
+    if not norm:
+        raise ValueError("TCP flags cannot be empty.")
+    norm_up = norm.upper()
+    if all(c in allowed_chars for c in norm_up):
+        return norm_up
+    invalid = sorted({c for c in norm_up if c not in allowed_chars})
+    raise ValueError(f"Invalid character(s) in TCP flags: {''.join(invalid)} (from {flags!r})")
 
 
 def _validate_pcre(pcre: str) -> str:
